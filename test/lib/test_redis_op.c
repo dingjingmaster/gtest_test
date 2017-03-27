@@ -163,6 +163,12 @@ int redis_get_hash_string(sRedisInfo* redisInfo, const char* iKey, const char* k
 	{
 		return ERROR;
 	}
+
+	if(NULL != redisInfo ->string)
+	{
+		free(redisInfo ->string);
+		redisInfo ->string = NULL;
+	}
 	
 	size_t					eles = 0;
 	size_t					len = 0;

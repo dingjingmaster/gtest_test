@@ -2,6 +2,8 @@ GTEST_DIR = ./
 
 USER_DIR = ./test/
 
+TEST_MODE = $(USER_DIR)/lib/test/
+
 CC = gcc
 
 CPP = g++
@@ -10,44 +12,51 @@ CPPFLAGS += -isystem $(GTEST_DIR)/include
 
 CXXFLAGS += -g -Wall -Wextra -pthread
 
-GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
+GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h 				\
                 $(GTEST_DIR)/include/gtest/internal/*.h
 
-CHEAD = -I $(USER_DIR)/lib/lib/json/					\
-		-I $(USER_DIR)/lib/lib/hiredis/					\
-		-I $(USER_DIR)/lib/
+CHEAD = -I $(USER_DIR)/lib/lib/json/						\
+		-I $(USER_DIR)/lib/lib/hiredis/						\
+		-I $(USER_DIR)/lib/									\
+		-I $(USER_DIR)/src/Model/							\
+		-I $(USER_DIR)/src/
 
 CLIBS = -lm
 
 GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
 
 
-TARGET = recom_test
+TARGET = recom_test model_test
 
-REPLY_BASE = $(USER_DIR)/lib/test_http_op.o				\
-			 $(USER_DIR)/lib/test_json_op.o				\
-			 $(USER_DIR)/lib/test_log_op.o				\
-			 $(USER_DIR)/lib/test_redis_op.o			\
-			 $(USER_DIR)/lib/lib/json/cJSON.o			\
-			 $(USER_DIR)/lib/lib/hiredis/hiredis.o		\
-			 $(USER_DIR)/lib/lib/hiredis/net.o			\
-			 $(USER_DIR)/lib/lib/hiredis/read.o			\
-			 $(USER_DIR)/lib/lib/hiredis/sds.o			\
-			 $(USER_DIR)/lib/lib/hiredis/async.o	
+REPLY_BASE = $(USER_DIR)/lib/test_http_op.o					\
+			 $(USER_DIR)/lib/test_json_op.o					\
+			 $(USER_DIR)/lib/test_log_op.o					\
+			 $(USER_DIR)/lib/test_redis_op.o				\
+			 $(USER_DIR)/lib/lib/json/cJSON.o				\
+			 $(USER_DIR)/lib/lib/hiredis/hiredis.o			\
+			 $(USER_DIR)/lib/lib/hiredis/net.o				\
+			 $(USER_DIR)/lib/lib/hiredis/read.o				\
+			 $(USER_DIR)/lib/lib/hiredis/sds.o				\
+			 $(USER_DIR)/lib/lib/hiredis/async.o			\
+			 $(USER_DIR)/src/Model/test_filter.o			\
+			 $(USER_DIR)/src/Model/test_pushAndPull.o		\
+			 $(USER_DIR)/src/Model/test_print.o				\
+			 $(USER_DIR)/src/Model/test_bkRec.o				\
+			 $(USER_DIR)/src/gtest.a				
 
-RECOM_TEST_OBJ = $(USER_DIR)/src/main.o					\
-				 $(USER_DIR)/src/gtest.a				\
-				 $(USER_DIR)/src/test_301.o				\
-				 $(USER_DIR)/src/test_push.o			\
+
+RECOM_TEST_OBJ = $(USER_DIR)/src/main.o						\
+				 $(USER_DIR)/src/test_301.o					\
 
 
-#all : $(TARGET)
-
+all : $(TARGET)
 
 
 recom_test : $(RECOM_TEST_OBJ) $(REPLY_BASE)
 	$(CPP) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ $(CHEAD)
 
+model_test:
+	cd $(TEST_MODE) && make
 
 
 %.o : %.cpp
@@ -68,7 +77,12 @@ $(USER_DIR)/src/gtest.a : gtest-all.o
 
 .PHONY : clean
 clean :
-	rm -fr $(TARGET) $(GTEST_DIR)*.o $(RECOM_TEST_OBJ) $(REPLY_BASE)	
+	cd $(TEST_MODE) && make clean
+	rm -fr $(TARGET)
+	rm -fr $(GTEST_DIR)*.o
+	rm -fr $(RECOM_TEST_OBJ)
+	rm -fr $(REPLY_BASE)
+	clear
 
 
 

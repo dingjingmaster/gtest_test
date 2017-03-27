@@ -23,7 +23,7 @@ typedef struct _sSocketInfo
 }sSocketInfo;
 
 //初始化socket连接
-int http_init(sSocketInfo* sockInfo, char* ip, int port);
+int http_init(sSocketInfo* sockInfo, char* ip, unsigned short port);
 
 //发送数据
 int http_sendRequest(sSocketInfo* sockInfo, const char* sendReq);

@@ -8,16 +8,23 @@ enum
 
 
 //	json	初始化
-int json_init(sJsonInfo* jsonData)
+int json_init(sJsonInfo* jsonData, const char* data, unsigned int dataLen)
 {
-	if(jsonData == NULL)
+	if((NULL == jsonData || NULL == data || dataLen < 0) && (NULL == jsonData ->dataIn))
 	{
 		return ERROR;
 	}
 
-	jsonData ->dataIn = 0;
-	jsonData ->dataInLen = 0;
-	jsonData ->dataOut = 0;
+	if(0 == dataLen)
+	{
+		dataLen = (unsigned int)strlen(data);
+	}
+
+	jsonData ->dataIn = malloc(dataLen + 1);
+	memset(jsonData ->dataIn, 0, dataLen + 1);
+	strncpy(jsonData ->dataIn, data, dataLen);
+	jsonData ->dataInLen = dataLen;
+	jsonData ->dataOut = NULL;
 	jsonData ->dataOutLen = 0;
 
 	return OK;
@@ -32,7 +39,7 @@ int	json_package(json_operation_back package, sJsonInfo* jsonData, void* arg)
 	}
 
 	int		ret = 0;
-	ret = package(jsonData);
+	ret = package(jsonData, arg);
 	if(ret != OK)
 	{
 		return ERROR;
@@ -50,7 +57,7 @@ int json_parse(json_operation_back parse, sJsonInfo* jsonData, void* arg)
 	}
 
 	int		ret = 0;
-	ret = parse(jsonData);
+	ret = parse(jsonData, arg);
 	if(ret != OK)
 	{
 		return ERROR;
@@ -64,11 +71,20 @@ int json_free(sJsonInfo* jsonData)
 {
 	if(jsonData == NULL)
 	{
-		return ERROR;
+		return OK;
 	}
 
-	free(jsonData ->dataOut);
-	jsonData ->dataOutLen = 0;
+	if(NULL != jsonData ->dataOut)
+	{
+		free(jsonData ->dataOut);
+		jsonData ->dataOutLen = 0;
+	}
+
+	if(NULL != jsonData ->dataIn)
+	{
+		free(jsonData ->dataIn);
+		jsonData ->dataInLen = 0;
+	}
 
 	return OK;
 }

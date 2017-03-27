@@ -1,6 +1,5 @@
 #include "test_json_op.h"
 #include <stdio.h>
-#include <string.h>
 
 typedef struct _SPackage
 {
@@ -10,7 +9,7 @@ typedef struct _SPackage
 
 }sPackage;
 
-int json_parse_test(sJsonInfo* jsonData)
+int json_parse_test(sJsonInfo* jsonData, void* arg)
 {
 	cJSON*	root = NULL;
 	root = cJSON_Parse(jsonData ->dataIn);
@@ -32,7 +31,7 @@ int json_parse_test(sJsonInfo* jsonData)
 	return 1;
 }
 
-int json_package_test(sJsonInfo* jsonData)
+int json_package_test(sJsonInfo* jsonData, void* arg)
 {
 	cJSON*	root = NULL;
 
@@ -72,7 +71,7 @@ int main()
 	student.age = 25;
 
 	// json 打包测试
-	json_init(&jsonPack);
+	json_init(&jsonPack, NULL, 0);
 	
 	jsonPack .dataIn = (void*)&student;
 	jsonPack .dataInLen = sizeof(student);
@@ -83,7 +82,7 @@ int main()
 	printf("%s\n", (char*)(jsonPack .dataOut));
 
 	// json 解析
-	json_init(&jsonParse);
+	json_init(&jsonParse, NULL, 0);
 
 	jsonParse.dataIn = jsonPack.dataOut;
 	jsonParse.dataInLen = jsonPack.dataOutLen;

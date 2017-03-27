@@ -15,7 +15,7 @@ enum
 };
 
 
-int http_init(sSocketInfo* sockInfo, char* ip, int port)
+int http_init(sSocketInfo* sockInfo, char* ip, unsigned short port)
 {
 	if(NULL == sockInfo || NULL == ip )
 	{
@@ -73,7 +73,6 @@ int http_sendRequest(sSocketInfo* sockInfo, const char* sendReq)
 			"User-Agent: Mozilla/4.04[en](Win95;I;Nav)\r\n",							\
 			"Content-Type: application/x-www-form-urlencoded\r\n\r\n");
 
-	printf("%s\n", sendBuf);
 	ret = write(sockInfo ->fd, sendBuf, strlen(sendBuf));
 	if(ret == -1)
 	{

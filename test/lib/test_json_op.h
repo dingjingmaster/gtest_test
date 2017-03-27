@@ -7,6 +7,7 @@ extern "C"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "cJSON.h"
 
 /**
@@ -33,11 +34,11 @@ typedef struct _sJsonInfo
 }sJsonInfo;
 
 //	json 回调
-typedef int(*json_operation_back)(sJsonInfo* jsonData);
+typedef int(*json_operation_back)(sJsonInfo* jsonData, void* arg);
 
 
 //	json	初始化
-int json_init(sJsonInfo* jsonData);
+int json_init(sJsonInfo* jsonData, const char* data, unsigned int dataLen);
 
 //	json	打包
 int	json_package(json_operation_back package, sJsonInfo* jsonData, void* arg);
